@@ -41,6 +41,6 @@ The conversion may fail because of **NotImplemented Error** which is caused when
 
 ## Disclaimer
 
-You can already use the software, but you shall take is as not fully developed, so there still may be problems and some features may not work properly or at all.
+You can already use the software, but you shall take it as not fully developed, so there still may be problems and some features may not work properly or at all.
 
 
