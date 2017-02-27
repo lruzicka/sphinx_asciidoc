@@ -160,7 +160,6 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('))')
     
 
-    
     def visit_section(self, node):
         self.section_level += 1
         
@@ -268,11 +267,11 @@ class AsciiDocTranslator(nodes.NodeVisitor):
             self.body.append(']')
 
     def visit_docinfo(self, node):
-        nline = ''
+        nline = 'Document information: '
         self.body.append(nline)
 
     def depart_docinfo(self, node):
-        self.body.append('\n')
+        self.body.append('\n\n')
 
     def visit_author(self, node):
         nline = 'Author: '
@@ -307,11 +306,11 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     def depart_topic(self, node):
         pass
 
-    def visit_target(self, node): # Should create links, leave empty.
-        pass
+    def visit_target(self, node): # Create internal inline links.
+        self.body.append('<<')
         
     def depart_target(self, node):
-        pass
+        self.body.append('>>')
         
     def visit_compound(self, node): # Needs to be implemented.
         pass
@@ -382,14 +381,16 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append(nline+mline)
         
     def depart_tip(self, node):
-        if self.listLevel > 0:
+        level = len(self.lists)
+        if level > 0:
             nline = '====\n\n'
         else:
             nline = '====\n'
         self.body.append(nline)
 
     def visit_warning(self, node):
-        if self.listLevel > 0:
+        level = len(self.lists)
+        if level > 0:
             nline = '+\n[WARNING]\n'
         else:
             nline = '[WARNING]\n'
@@ -397,7 +398,8 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append(nline+mline)
 
     def depart_warning(self, node):
-        if self.listLevel > 0:
+        level = len(self.lists)
+        if level > 0:
             nline = '====\n\n'
         else:
             nline = '====\n'
@@ -416,7 +418,8 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         pass
     
     def visit_important(self, node):
-        if self.listLevel > 0:
+        level = len(self.lists)
+        if level > 0:
             nline = '+\n[IMPORTANT]\n'
         else:
             nline = '[IMPORTANT]\n'
@@ -424,14 +427,16 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append(nline+mline)
         
     def depart_important(self, node):
-        if self.listLevel > 0:
+        level = len(self.lists)
+        if level > 0:
             nline = '====\n\n'
         else:
             nline = '====\n'
         self.body.append(nline)
 
     def visit_caution(self, node):
-        if self.listLevel > 0:
+        level = len(self.lists)
+        if level > 0:
             nline = '+\n[CAUTION]\n'
         else:
             nline = '[CAUTION]\n'
@@ -439,7 +444,8 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append(nline+mline)
 
     def depart_caution(self, node): # Pozor, opravit na level = len(self.lists)
-        if self.listLevel > 0:
+        level = len(self.lists)
+        if level > 0:
             nline = '====\n\n'
         else:
             nline = '====\n'
@@ -517,7 +523,6 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append(nline)
 
     def visit_label(self,node):
-        nodes.SkipNode
         pass
 
     def depart_label(self,node):
@@ -541,7 +546,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     def visit_figure(self, node):
         ids = str(node['ids'])
         count = str(self.figures)
-        nline = '\n[[figure'+count+']]\n'
+        nline = '\n[[ids]]\n'
         mline = '.'+ids+'\n'
         self.body.append(nline+mline)
         
@@ -611,19 +616,19 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         pass
 
     def visit_subscript(self,node):
-        self.body.append('^')
+        self.body.append('~')
 
     def depart_subscript(self,node):
-        self.body.append('^')
+        self.body.append('~')
 
     def visit_superscript(self,node):
-        pass
+        self.body.append('^')
 
     def depart_superscript(self,node):
-        pass
+        self.body.append('^')
 
     def visit_title_reference(self,node):
-        pass
+        print node
 
     def depart_title_reference(self,node):
         pass
