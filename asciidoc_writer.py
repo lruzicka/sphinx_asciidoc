@@ -565,7 +565,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
             clist.append(str(col))
         cline = ','.join(clist)    
         specline = '[cols="'+cline+'",options="header"]\n'
-        introline = "|===\n\h| "
+        introline = "|===\nh| "
         self.body.append(specline+introline)
 
     def depart_tgroup(self,node):
