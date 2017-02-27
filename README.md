@@ -1,6 +1,4 @@
-# rst2adoc
-
-## AsciiDoc Builder and Writer for Sphinx
+# AsciiDoc Builder and Writer for Sphinx (rst2adoc)
 
 ## Introduction
 
@@ -29,13 +27,13 @@ After the program is over, you will find a new file in the target directory with
 ## Current status
 The convertor is able to serve as a Sphinx builder and writer, as well as a standalone reST to asciidoc convertor. It understands the most important Docutils nodes and produces a usable asciidoc format, but there still are improvements necessary.
 
-The conversion may fail because of **NotImplemented Error** which is caused when the convertor does not understand how it shall interpret the particular node. Some of the nodes are partially implemented, i.e. the conversion does not fail on them, but they are only converted as plain text, so that the formatting features are dropped. 
+The conversion may fail because of **NotImplemented Error** which is caused when the convertor does not understand how it shall interpret the particular node. Some of the nodes are partially implemented, i.e. the conversion does not fail on them, but they are only converted as plain text, so the formatting features are dropped. 
 
 ## Further improvements
 
  Among the most needed things are:
 
-1. implement formatting features of the nodes that only produce plain text 
+1. implement formatting features of the nodes that only produce plain text.
 2. implement the not yet implemented Sphinx and docutils nodes, so that the asciidoc files use all possible features of the original reST and Sphinx format.
 3. improve the visitors (conversion functions) so that the asciidoc output is always flawless and possibly error free.
 
