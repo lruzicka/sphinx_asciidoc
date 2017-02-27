@@ -124,10 +124,10 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     def visit_title(self, node):
         if isinstance(node.parent, nodes.document):
             """ doc title """
-            self.body.append('\n%s ' % sectionEquals[0])
+            self.body.append('\n\n%s ' % sectionEquals[0])
         elif isinstance(node.parent, nodes.section):
             level = self.section_level
-            self.body.append('\n%s ' % sectionEquals[level])
+            self.body.append('\n\n%s ' % sectionEquals[level])
         
 
     def depart_title(self, node):
@@ -307,10 +307,11 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         pass
 
     def visit_target(self, node): # Create internal inline links.
-        self.body.append('<<')
+        refid = node['refid']
+        self.body.append('<<'+str(refid))
         
     def depart_target(self, node):
-        self.body.append('>>')
+        self.body.append('>> ')
         
     def visit_compound(self, node): # Needs to be implemented.
         pass
@@ -578,7 +579,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append(specline+introline)
 
     def depart_tgroup(self,node):
-        nline = '|==='
+        nline = '|===\n'
         self.body.append(nline)
 
     def visit_colspec(self,node): ## Column specifics
