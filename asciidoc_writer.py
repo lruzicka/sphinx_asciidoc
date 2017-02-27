@@ -565,11 +565,11 @@ class AsciiDocTranslator(nodes.NodeVisitor):
             clist.append(str(col))
         cline = ','.join(clist)    
         specline = '[cols="'+cline+'",options="header"]\n'
-        introline = "|====\n"
+        introline = "|===\n"
         self.body.append(specline+introline)
 
     def depart_tgroup(self,node):
-        nline = '|===='
+        nline = '|==='
         self.body.append(nline)
 
     def visit_colspec(self,node): ## Column specifics
