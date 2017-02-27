@@ -474,20 +474,26 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 
 
     def visit_image(self,node):
-        tag = str(node)
-        parsed = tag.split(' ')
-        for feature in parsed:
-            if 'uri' in feature:
-                ptag = feature.split('"')
-                path = ptag[1]
-        for feature in parsed:
-            if 'alt' in feature:
-                palt = feature.split('"')
-                alt = palt[1]
-                break
-            else:
-                alt = 'Image'
-        nline = 'image::'+path+'['+alt+']'
+        try:
+            alt = node['alt']
+        except KeyError:
+            alt = 'Image'
+            
+        uri = node['uri']
+        #tag = str(node)
+        #parsed = tag.split(' ')
+        #for feature in parsed:
+        #    if 'uri' in feature:
+        #        ptag = feature.split('"')
+        #        path = ptag[1]
+        #for feature in parsed:
+        #    if 'alt' in feature:
+        #        palt = feature.split('"')
+        #        alt = palt[1]
+        #        break
+        #    else:
+        #        alt = 'Image'
+        nline = 'image::'+uri+'['+alt+']'
         self.body.append(nline)
 
     def depart_image(self,node):
@@ -533,12 +539,10 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         pass
     
     def visit_figure(self, node):
-        self.figures = self.figures + 1
-        tag = str(node)
-        caption = node['caption']
+        ids = str(node['ids'])
         count = str(self.figures)
-        nline = '[[figure'+count+']]\n'
-        mline = '.'+caption+'\n'
+        nline = '\n[[figure'+count+']]\n'
+        mline = '.'+ids+'\n'
         self.body.append(nline+mline)
         
 
