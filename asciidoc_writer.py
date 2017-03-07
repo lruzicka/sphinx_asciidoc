@@ -317,16 +317,16 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         pass
         
     def visit_compound(self, node): # Needs to be implemented.
-        pass
+        self.body.append('COMPOUND:')
 
     def depart_compound(self, node):
-        pass
+        self.body.append(':COMPOUND')
 
     def visit_glossary(self, node):
-        pass
+        self.body.append('GLOSSARY:')
 
     def depart_glossary(self, node):
-        pass
+        self.body.append('GLOSSARY:')
 
     def visit_note(self, node):
         if self.listLevel > 0:
@@ -527,10 +527,10 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append(nline)
 
     def visit_label(self,node):
-        pass
+        self.body.append('LABEL:') 
 
     def depart_label(self,node):
-        pass
+        self.body.append(':LABEL')
 
     def visit_contents(self,node):
         nline = '== '
@@ -540,8 +540,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         pass
         
     def visit_system_message(self,node):
-        #self.body.append('System message: ')
-        pass
+        self.body.append('System message: ')
     
     def depart_system_message(self,node):
         #self.body.append('')
@@ -632,13 +631,13 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('^')
 
     def visit_title_reference(self,node):
-        print node
+        self.body.append('TITLE REFERENCE: ') 
 
     def depart_title_reference(self,node):
         pass
 
     def visit_line_block(self,node):
-        pass
+        self.body.append('LINE BLOCK: ')
 
     def depart_line_block(self,node):
         pass
@@ -657,31 +656,31 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('////\n')
 
     def visit_problematic(self,node):
-        pass
+        self.body.append('PROBLEMATIC: ')
 
     def depart_problematic(self,node):
         pass
 
     def visit_raw(self,node):
-        pass
+        self.body.append('RAW: ')
 
     def depart_raw(self,node):
         pass
     
     def visit_subtitle(self,node):
-        pass
+        self.body.append('SUBTITLE: ')
 
     def depart_subtitle(self,node):
         pass
 
     def visit_inline(self,node):
-        pass
+        self.body.append('INLINE: ')
 
     def depart_inline(self,node):
         pass
 
     def visit_desc(self, node):
-        pass
+        self.body.append('DESC: ')
 
     def depart_desc(self, node):
         pass
