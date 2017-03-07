@@ -309,7 +309,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     def visit_target(self, node): # Create internal inline links.
         try:
             refid = node['refid']
-            self.body.append('<<'+str(refid)+'>> ')
+            self.body.append('[['+str(refid)+']] ')
         except KeyError:
             pass
         
