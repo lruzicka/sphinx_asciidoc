@@ -253,7 +253,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         elif 'refid' in tag:
             self.linkType = 'refx'
             link = node['refid']
-            nline = '<<'+link
+            nline = '[['+link
             self.body.append(nline)
         else:
             self.body.append('[')
@@ -262,7 +262,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         if self.linkType == 'link':
             self.body.append(']')
         elif self.linkType == 'refx':
-            self.body.append('>>')
+            self.body.append(']]')
         else:
             self.body.append(']')
 
@@ -510,8 +510,11 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('\n\n')
 
     def visit_footnote_reference(self,node):
-        ref = str(node['refid'])
-        nline = "footnoteref:["+ref+","
+        try:
+            ref = str(node['refid'])
+            nline = "footnoteref:["+ref+","
+        except KeyError:
+            pass
         self.body.append(nline)
 
     def depart_footnote_reference(self,node):
@@ -673,11 +676,11 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     def depart_subtitle(self,node):
         self.body.append('')
 
-    def visit_inline(self,node):
-        self.body.append('INLINE: ')
+    def visit_inline(self,node): # Leave passed
+        pass
 
     def depart_inline(self,node):
-        self.body.append('')
+        pass
 
     def visit_desc(self, node):
         self.body.append('DESC: ')
