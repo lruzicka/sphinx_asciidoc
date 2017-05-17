@@ -107,6 +107,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.figures = 0 # Counts figures for reference targets
         self.inTable = False
         self.turnsInList = 0
+        self.inDesc = False
 
     def astext(self):
         docs = ''
@@ -127,7 +128,11 @@ class AsciiDocTranslator(nodes.NodeVisitor):
             self.body.append('\n\n%s ' % sectionEquals[0])
         elif isinstance(node.parent, nodes.section):
             level = self.section_level
-            self.body.append('\n\n%s ' % sectionEquals[level])
+            try:
+                tstr = sectionEquals[level]
+            except KeyError:
+                tstr = '= '
+            self.body.append('\n\n%s ' % tstr)
 
 
     def depart_title(self, node):
@@ -153,11 +158,12 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append(nline)
 
     def visit_index(self,node):
-        self.body.append('((')
-
+        #self.body.append('((')
+        pass
 
     def depart_index(self,node):
-        self.body.append('))')
+        #self.body.append('))')
+        pass
 
 
     def visit_section(self, node):
@@ -168,7 +174,10 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 
     @indent
     def visit_paragraph(self, node):
-        nline = ''
+        if self.inDesc == True:
+            nline = ''
+        else:
+            nline = '\n'
         self.body.append(nline)
 
     @dedent
@@ -653,10 +662,10 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('\n')
 
     def visit_comment(self,node):
-        self.body.append('\n////')
+        self.body.append('\n//')
 
     def depart_comment(self,node):
-        self.body.append('////\n')
+        self.body.append('//\n')
 
     def visit_problematic(self,node):
         self.body.append('PROBLEMATIC: ')
@@ -683,16 +692,20 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         pass
 
     def visit_desc(self, node):
-        self.body.append('DESC: ')
+        self.inDesc = True
+        self.body.append('\n')
 
     def depart_desc(self, node):
-        self.body.append('')
+        self.inDesc = False
+        self.body.append('\n')
 
     def visit_desc_signature(self, node):
-        self.body.append('DESCSIGNATURE: ')
+        #self.body.append('DESCSIGNATURE: ')
+        pass
 
     def depart_desc_signature(self, node):
-        self.body.append(':DESCSIGNATURE')
+        #self.body.append(':DESCSIGNATURE')
+        self.body.append(':: ')
 
     def visit_desc_signature_line(self, node):
         self.body.append('DESCSIGLINE:')
@@ -701,16 +714,20 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('DESCSIGLINE')
 
     def visit_desc_name(self, node):
-        self.body.append('DESCNAME:')
+        #self.body.append('DESCNAME:')
+        pass
 
     def depart_desc_name(self, node):
-        self.body.append(':DESCNAME')
+        #self.body.append(':DESCNAME')
+        self.body.append(' ')
 
     def visit_desc_addname(self, node):
-        self.body.append('DESCADDNAME')
+        #self.body.append('DESCADDNAME')
+        pass
 
     def depart_desc_addname(self, node):
-        self.body.append(':DESCADDNAME')
+        #self.body.append(':DESCADDNAME')
+        pass
 
     def visit_desc_type(self, node):
         self.body.append('DESCTYPE:')
@@ -749,10 +766,12 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('DESCANNOTATION:')
 
     def visit_desc_content(self, node):
-        self.body.append(':DESCCONTENT')
+        #self.body.append(':DESCCONTENT')
+        pass
 
     def depart_desc_content(self, node):
-        self.body.append('DESCCONTENT:')
+        #self.body.append('DESCCONTENT:')
+        pass
 
     def visit_productionlist(self, node):
     #   self.new_state()
