@@ -327,7 +327,6 @@ class AsciiDocTranslator(nodes.NodeVisitor):
             refid = False
         refuri = node.get('refuri')
         refnames = node.get('refnames')
-        print refid,refuri,refnames
 
         if refid != False:
             if refuri:
