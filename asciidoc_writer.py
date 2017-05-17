@@ -252,28 +252,32 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         pass
 
     def visit_reference(self, node):
-        tag = str(node)
 
-        if 'refuri' in tag:
+        #print 'IDS: '+str(node.get('ids'))
+        #print 'REFURI: '+str(node.get('refuri'))
+        #print 'REFID: '+str(node.get('refid'))
+        
+        uri = node.get('refuri')
+        refid = node.get('refid')
+        self.linkType = None
+        if uri:
             self.linkType = 'link'
-            link = node['refuri']
-            nline = 'link:'+link+'['
+            nline = 'link:++%s++[' % uri
             self.body.append(nline)
-        elif 'refid' in tag:
+        elif refid:
             self.linkType = 'refx'
-            link = node['refid']
-            nline = '[['+link
+            nline = 'xref:%s[' % refid
             self.body.append(nline)
         else:
-            self.body.append('[')
+            pass
 
     def depart_reference(self, node):
         if self.linkType == 'link':
             self.body.append(']')
         elif self.linkType == 'refx':
-            self.body.append(']]')
-        else:
             self.body.append(']')
+        else:
+            pass
 
     def visit_docinfo(self, node):
         nline = 'Document information: '
@@ -317,13 +321,13 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 
     def visit_target(self, node): # Create internal inline links.
         try:
-            refid = node['refid']
-            self.body.append('[['+str(refid)+']] ')
+            refid = node.get('refid')
+            self.body.append('anchor:%s[' % refid)
         except KeyError:
             pass
 
     def depart_target(self, node):
-        pass
+        self.body.append(']')
 
     def visit_compound(self, node): # Needs to be implemented.
         self.body.append('COMPOUND:')
