@@ -13,7 +13,7 @@ Currently, there are two files in the repository:
 * **asciidoc_builder.py** is a Sphinx builder that you can place in the *builders* directory of the Sphinx installation.
 * **asciidoc_writer.py** is Sphinx writer that you can place in the *writers* directory of the Sphinx installation.
 
-Note, that in order to work, you must register the new builder in the Sphinx application (*application.py*).
+Note, that in order to work, both files must be renamed to *asciidoc.py* in the respective directory and you must register the new builder in the Sphinx application (*application.py*). I am currently studying how to write an installation script. If you know how, let me know.
 
 ## Standalone usage
 
