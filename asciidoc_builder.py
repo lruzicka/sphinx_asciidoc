@@ -5,7 +5,7 @@
 
     AsciiDoc Sphinx builder.
 
-    :copyright: Copyright 2007-2016 by the Sphinx team, see AUTHORS.
+    :copyright: Copyright 2007-2016 by the Sphinx team, see https://github.com/sphinx-doc/sphinx.
     :copyright: Copyright 2017 by Lukas Ruzicka (based on the Sphinx TextBuilder by the Sphinx team (see above))
     :license: BSD, see LICENSE for details.
 """
