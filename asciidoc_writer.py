@@ -108,6 +108,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.inTable = False
         self.turnsInList = 0
         self.inDesc = False
+        self.inList = False
 
     def astext(self):
         docs = ''
@@ -176,6 +177,8 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     def visit_paragraph(self, node):
         if self.inDesc == True:
             nline = ''
+        elif self.inList == True:
+            nline = ''
         else:
             nline = '\n'
         self.body.append(nline)
@@ -202,6 +205,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append(nline)
 
     def visit_bullet_list(self, node): # Unordered list
+        self.inList = True
         self.lists.append('bulleted')
         if self.inTable == True:
             self.body.append('\n')
@@ -217,8 +221,10 @@ class AsciiDocTranslator(nodes.NodeVisitor):
             self.body.append('\n')
         self.lists.pop(-1)
         self.turnsInList = 0
+        self.inList = False
 
     def visit_enumerated_list(self, node): # Ordered list
+        self.inList = True
         self.lists.append('numbered')
         enumeration = node['enumtype']
         self.body.append('\n['+enumeration+']\n')
@@ -228,6 +234,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     def depart_enumerated_list(self,node):
         self.lists.pop(-1)
         self.turnsInList = 0
+        self.inList = False
 
 
     def visit_list_item(self, node):
@@ -406,6 +413,13 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 
     def depart_emphasis(self, node):
         self.body.append('_')
+    
+    def visit_literal_emphasis(self, node):
+        nline = ' `*'
+        self.body.append(nline)
+
+    def depart_literal_emphasis(self, node):
+        self.body.append('*`')
 
     def visit_tip(self, node):
         level = len(self.lists)
@@ -773,7 +787,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     def visit_desc_parameter(self, node):
         self.body.append('DESCPARAMETER:')
 
-    def depart_desc_paramter(self,node):
+    def depart_desc_parameter(self,node):
         self.body.append(':DESCPARAMETER')
 
     def visit_desc_optional(self, node):
