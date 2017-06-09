@@ -134,10 +134,14 @@ class AsciiDocTranslator(nodes.NodeVisitor):
             except KeyError:
                 tstr = '= '
             self.body.append('\n\n%s ' % tstr)
-
+        elif isinstance(node.parent, nodes.table):
+            self.body.append('\n.') # Table title
 
     def depart_title(self, node):
-        self.body.append('\n\n')
+        if isinstance(node.parent, nodes.table):
+            self.body.append('\n') # Table title
+        else:
+            self.body.append('\n\n')
 
     def visit_Text(self, node):
 ##        if self.bullet is not None:
@@ -145,7 +149,6 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 ##            self.bullet = None
 ##        self.body.append(toansi(node.astext()))
         self.body.append(node.astext())
-
 
     def depart_Text(self, node):
         pass
@@ -165,7 +168,6 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     def depart_index(self,node):
         #self.body.append('))')
         pass
-
 
     def visit_section(self, node):
         self.section_level += 1
@@ -191,7 +193,6 @@ class AsciiDocTranslator(nodes.NodeVisitor):
             nline = '\n'
         self.body.append(nline)
 
-
     def visit_compact_paragraph(self, node):
         nline = ''
         self.body.append(nline)
@@ -213,7 +214,6 @@ class AsciiDocTranslator(nodes.NodeVisitor):
             self.body.append('\n')
         self.turnsInList = self.turnsInList + 1
 
-
     def depart_bullet_list(self, node):
         if self.listLevel == -1:
             self.body.append('\n\n')
@@ -230,12 +230,10 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('\n['+enumeration+']\n')
         self.turnsInList = self.turnsInList + 1
 
-
     def depart_enumerated_list(self,node):
         self.lists.pop(-1)
         self.turnsInList = 0
         self.inList = False
-
 
     def visit_list_item(self, node):
         level = len(self.lists)
@@ -314,8 +312,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     def depart_copyright(self, node):
         self.body.append('\n\n')
 
-
-    def visit_rubric(self, node): # Needs to be implemented.
+    def visit_rubric(self, node): # FIXME: Needs to be implemented.
         pass
 
     def depart_rubric(self, node):
@@ -355,7 +352,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         #self.body.append(']')
         pass
 
-    def visit_compound(self, node): # Needs to be implemented.
+    def visit_compound(self, node): # FIXME: Needs to be implemented.
         self.body.append('COMPOUND:')
 
     def depart_compound(self, node):
@@ -493,7 +490,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         mline = '====\n'
         self.body.append(nline+mline)
 
-    def depart_caution(self, node): # Pozor, opravit na level = len(self.lists)
+    def depart_caution(self, node): # FIXME: change to level = len(self.lists)
         level = len(self.lists)
         if level > 0:
             nline = '====\n\n'
@@ -527,7 +524,6 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 
     def depart_definition(self,node):
         self.body.append('\n\n')
-
 
     def visit_image(self,node):
         try:
@@ -601,7 +597,6 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         nline = '\n[[ids]]\n'
         mline = '.'+ids+'\n'
         self.body.append(nline+mline)
-
 
     def depart_figure(self, node):
         self.body.append('\n\n')
@@ -680,7 +675,8 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('^')
 
     def visit_title_reference(self,node):
-        self.body.append('TITLE REFERENCE: ')
+        # self.body.append('TITLE REFERENCE: ')
+        pass
 
     def depart_title_reference(self,node):
         pass
@@ -699,10 +695,10 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('\n')
 
     def visit_comment(self,node):
-        self.body.append('\n//')
+        self.body.append('\n////\n')
 
     def depart_comment(self,node):
-        self.body.append('//\n')
+        self.body.append('\n////\n\n')
 
     def visit_problematic(self,node):
         self.body.append('PROBLEMATIC: ')
@@ -969,11 +965,11 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     def depart_substitution_definition(self,node):
         self.body.append(':SBSdef')
 
+    def visit_abbreviation(self,node):
+        pass # FIXME: We lose explanation this way
 
-
-
-
-
+    def depart_abbreviation(self,node):
+        pass # FIXME: We lose explanation this way
 
 if __name__ == "__main__":
     """ To test the writer """
