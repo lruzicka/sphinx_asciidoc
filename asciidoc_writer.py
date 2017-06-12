@@ -179,7 +179,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     def visit_paragraph(self, node):
         if self.inDesc == True:
             nline = ''
-        elif self.inList == True:
+        elif self.inTable == True or self.inList == True:
             nline = ''
         else:
             nline = '\n'
@@ -188,6 +188,8 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     @dedent
     def depart_paragraph(self, node):
         if self.listLevel == -1:
+            nline = '\n\n'
+        elif self.inTable == True:
             nline = '\n\n'
         else:
             nline = '\n'
@@ -208,8 +210,6 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     def visit_bullet_list(self, node): # Unordered list
         self.inList = True
         self.lists.append('bulleted')
-        if self.inTable == True:
-            self.body.append('\n')
         if self.turnsInList == 0:
             self.body.append('\n')
         self.turnsInList = self.turnsInList + 1
@@ -248,7 +248,10 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.turnsInList = self.turnsInList + 1
 
     def depart_list_item(self, node):
-        self.body.append('\n')
+        if self.inTable == True:
+            self.body.append('')
+        else:
+            self.body.append('\n')
 
     def visit_block_quote(self, node):
         pass
