@@ -679,11 +679,9 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 
     def visit_title_reference(self,node):
         self.body.append('`')
-        pass
 
     def depart_title_reference(self,node):
         self.body.append('`')
-        pass
 
     def visit_line_block(self,node):
         self.body.append('LINE BLOCK: ')
