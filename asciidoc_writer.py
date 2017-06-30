@@ -652,12 +652,12 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('\n')
 
     def visit_entry(self,node): # Table cell
-        nline = 'a| '
+        nline = ''
         self.body.append('')
 
 
     def depart_entry(self,node):
-        self.body.append(' a| ')
+        self.body.append('a| ')
 
     def visit_tbody(self,node):
         pass
