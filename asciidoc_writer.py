@@ -17,7 +17,7 @@ from docutils import writers, nodes
 import sys
 
 from sphinx import addnodes
-from sphinx.deprecation import RemovedInSphinx16Warning
+#from sphinx.deprecation import RemovedInSphinx16Warning
 from sphinx.locale import admonitionlabels, _
 
 class AsciiDocWriter(writers.Writer):
