@@ -7,7 +7,7 @@
 
    Custom docutils writer for AsciiDoc format.
 
-   This writer is based on the RTF writer by Benoit Allard (benoit@aeteurope.nl) and has been adapted to the use with AsciiDoc.
+   This writer is based on the RTF writer by Benoit Allard (benoit@aeteurope.nl) and has been adapted to use with AsciiDoc.
 
    Author:    Lukas Ruzicka
    Contact:   lukas.ruzicka@gmail.com

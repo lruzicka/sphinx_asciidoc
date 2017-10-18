@@ -73,6 +73,10 @@ class AsciiDocBuilder(Builder):
 def setup(app):
     app.add_builder(AsciiDocBuilder)
 
+    entry_points={
+                 'sphinx.builders': [
+                     'asciidoc = asciidoc.py',],}
+
     #app.add_config_value('text_sectionchars', '*=-~"+`', 'env')
     #app.add_config_value('text_newlines', 'unix', 'env')
 
