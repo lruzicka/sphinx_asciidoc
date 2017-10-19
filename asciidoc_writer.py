@@ -355,11 +355,11 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         #self.body.append(']')
         pass
 
-    def visit_compound(self, node): # FIXME: Needs to be implemented.
-        self.body.append('COMPOUND:')
+    def visit_compound(self, node): 
+        self.body.append('\n')
 
     def depart_compound(self, node):
-        self.body.append(':COMPOUND')
+        self.body.append('\n')
 
     def visit_glossary(self, node):
         self.body.append('GLOSSARY:')
@@ -677,7 +677,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     def depart_superscript(self,node):
         self.body.append('^')
 
-    def visit_title_reference(self,node):
+    def visit_title_reference(self,node): #This, in rst, was rendered as typeface font only.
         self.body.append('`')
 
     def depart_title_reference(self,node):
@@ -830,40 +830,40 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append(':PRODUCTIONLIST')
 
     def visit_option_list(self, node):
-        self.body.append('OPTION LIST:')
+        pass
 
     def depart_option_list(self, node):
-        self.body.append(':OPTION LIST')
+        self.body.append('\n')
 
     def visit_option_list_item(self, node):
-        self.body.append('OPTIONLISTITEM:')
+        pass
 
     def depart_option_list_item(self, node):
-        self.body.append(':OPTIONLISTITEM')
+        pass
 
     def visit_option_group(self, node):
-        self.body.append('OPTIONGROUP:')
+        self.body.append('')
 
     def depart_option_group(self, node):
-        self.body.append(':OPTIONGROUP')
+        self.body.append('')
 
     def visit_option(self, node):
-        self.body.append('OPTION:')
+        pass
 
     def depart_option(self, node):
-        self.body.append(':OPTION')
+        pass
 
     def visit_option_string(self, node):
-        self.body.append('OPTIONSTR:')
+        self.body.append('')
 
     def depart_option_string(self, node):
-        self.body.append(':OPTIONSTR')
+        self.body.append(' ')
 
     def visit_option_argument(self, node):
-        self.body.append('OPTIONARG:')
+        self.body.append('')
 
     def depart_option_argument(self, node):
-        self.body.append(':OPTIONARG')
+        self.body.append(' ')
 
     def visit_legend(self, node):
         self.body.append('LEGEND:')
@@ -872,34 +872,34 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append(':LEGEND')
 
     def visit_description(self, node):
-        self.body.append('DESCRIPTION:')
+        self.body.append(':: ')
 
     def depart_description(self, node):
-        self.body.append(':DESCRIPTION')
+        self.body.append('\n')
 
     def visit_field_list(self, node):
-        self.body.append('FIELDLIST:')
+        self.body.append('|===\n')
 
     def depart_field_list(self, node):
-        self.body.append(':FIELDLIST')
+        self.body.append('|===\n')
 
     def visit_field(self, node):
-        self.body.append('FIELD:')
+        self.body.append('')
 
     def depart_field(self, node):
-        self.body.append(':FIELD')
+        self.body.append('\n')
 
     def visit_field_name(self, node):
-        self.body.append('FIELDNAME:')
+        self.body.append('| ')
 
     def depart_field_name(self, node):
-        self.body.append(':FIELDNAME')
+        self.body.append('')
 
     def visit_field_body(self, node):
-        self.body.append('FIELDBODY:')
+        self.body.append('| ')
 
     def depart_field_body(self, node):
-        self.body.append(':FIELDBODY')
+        self.body.append('\n')
 
     def visit_centered(self, node):
         self.body.append('CENTER:')
@@ -972,6 +972,30 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 
     def depart_abbreviation(self,node):
         pass # FIXME: We lose explanation this way
+
+    def visit_seealso(self,node):
+        self.body.append('See also: ')
+
+    def depart_seealso(self,node):
+        pass
+    
+    def visit_todo_node(self,node):
+        self.body.append('To do: ')
+
+    def depart_todo_node(self,node):
+        pass
+
+    def visit_download_reference(self,node):
+        self.body.append('Download reference: ')
+
+    def depart_download_reference(self,node):
+        pass
+    
+    def visit_graphviz(self,node):
+        self.body.append('Graphviz: ')
+
+    def depart_graphviz(self,node):
+        pass
 
 if __name__ == "__main__":
     """ To test the writer """
