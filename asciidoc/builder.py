@@ -17,7 +17,7 @@ from docutils.io import StringOutput
 
 from sphinx.builders import Builder
 from sphinx.util.osutil import ensuredir, os_path
-from sphinx.writers.asciidoc import AsciiDocWriter
+from asciidoc.writer import AsciiDocWriter
 
 
 class AsciiDocBuilder(Builder):
@@ -75,7 +75,7 @@ def setup(app):
 
     entry_points={
                  'sphinx.builders': [
-                     'asciidoc = asciidoc.builder.py',],}
+                     'asciidoc = AsciiDocBuilder',],}
     return {
         'version': 'builtin',
         'parallel_read_safe': True,

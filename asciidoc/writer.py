@@ -1001,7 +1001,7 @@ if __name__ == "__main__":
     """ To test the writer """
     from docutils.core import publish_string
     filename = sys.argv[-1]
-    print 'Converting: '+ filename
+    print('Converting: '+ filename)
     f_in = open(filename, 'rb')
     rtf = publish_string(f_in.read(), writer=AsciiDocWriter())
     f_in.close()
@@ -1010,5 +1010,5 @@ if __name__ == "__main__":
 
     f_out = open(filename, 'wb')
     f_out.write(rtf)
-    print 'Converted file: ' + filename
+    print('Converted file: ' + filename)
     f_out.close()

@@ -4,7 +4,7 @@
 from distutils.core import setup
 
 setup(
-    name='sphinx-asciidoc',
+    name='asciidoc',
     version='1.0',
     description='Sphinx AsciiDoc extension',
     author='Lukas Ruzicka',
