@@ -75,11 +75,7 @@ def setup(app):
 
     entry_points={
                  'sphinx.builders': [
-                     'asciidoc = asciidoc.py',],}
-
-    #app.add_config_value('text_sectionchars', '*=-~"+`', 'env')
-    #app.add_config_value('text_newlines', 'unix', 'env')
-
+                     'asciidoc = asciidoc.builder.py',],}
     return {
         'version': 'builtin',
         'parallel_read_safe': True,
