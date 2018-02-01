@@ -1,0 +1,3 @@
+[sphinx.builders]
+asciidoc = asciidoc:AsciiDocBuilder
+
