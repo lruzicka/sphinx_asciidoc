@@ -1,5 +1,4 @@
 README.rst
-setup.py
 asciidoc/__init__.py
 asciidoc/builder.py
 asciidoc/writer.py

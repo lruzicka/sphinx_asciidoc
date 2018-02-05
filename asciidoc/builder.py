@@ -73,9 +73,9 @@ class AsciiDocBuilder(Builder):
 def setup(app):
     app.add_builder(AsciiDocBuilder)
 
-    entry_points={
-                 'sphinx.builders': [
-                     'asciidoc = AsciiDocBuilder',],}
+    #entry_points={
+    #             'sphinx.builders': [
+    #                 'asciidoc = AsciiDocBuilder',],}
     return {
         'version': 'builtin',
         'parallel_read_safe': True,
