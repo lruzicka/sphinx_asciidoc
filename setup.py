@@ -23,7 +23,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 # Fields marked as "Optional" may be commented out.
 
 setup(
-    name='sphinx-asciidoc',  # Required
+    name='sphinx_asciidoc',  # Required
     version='0.9.1',  # Required
     description='A custom Sphinx builder to make asciidoc output',  # Required
     long_description=long_description,  # Optional
@@ -56,7 +56,7 @@ setup(
 
     entry_points={  # Optional
         'sphinx.builders': [
-            'asciidoc = asciidoc:AsciiDocBuilder',
+            'asciidoc = sphinx_asciidoc:AsciiDocBuilder',
         ],
     },
 )
