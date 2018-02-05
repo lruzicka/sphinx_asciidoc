@@ -15,7 +15,7 @@ The following is my attempt to write an AsciiDoc extension
 for Sphinx and Docutils that would be able to serve as a builder and
 writer for Sphinx, as well as a simple reST to AsciiDoc convertor.
 
-It uses Python 3.
+It primarily uses Python 3, but should be fine with 2.7.
 
 Standalone usage
 ----------------
@@ -67,12 +67,12 @@ In the future, I will try to focus on:
 3. improve the visitors (conversion functions) so that the AsciiDoc
    output is always flawless and possibly error free.
 
-Installing the **sphinx-asciidoc** package
+Installing the **sphinx_asciidoc** package
 ------------------------------------------
 
 The package is in **PyPI**. To install it:
 
-    pip3 install sphinx-asciidoc
+    pip3 install sphinx_asciidoc
 
 Now, you should be able to use it.
 
