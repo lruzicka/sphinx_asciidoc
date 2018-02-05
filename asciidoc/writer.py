@@ -322,9 +322,14 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('\n')
 
     def visit_topic(self, node):
-        self.body.append('')
+        self.body.append('[verse]\n.')
     def depart_topic(self, node):
         self.body.append('')
+    
+    def visit_sidebar(self, node):
+        self.body.append('****\n')
+    def depart_sidebar(self, node):
+        self.body.append('****')
 
     def visit_target(self, node): # Create internal inline links.
         if self.extLinkActive == False:
@@ -361,10 +366,10 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.extLinkActive = False
 
     def visit_compound(self, node): 
-        self.body.append('\n')
+        self.body.append('====')
 
     def depart_compound(self, node):
-        self.body.append('\n')
+        self.body.append('====\n')
 
     def visit_glossary(self, node):
         self.body.append('GLOSSARY:')
@@ -467,10 +472,10 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('')
 
     def visit_attribution(self, node):
-        self.add_text('-- ')
+        self.body.append('-- ')
 
     def depart_attribution(self, node):
-        pass
+        self.body.append('\n')
 
     def visit_important(self, node):
         level = len(self.lists)
@@ -684,19 +689,19 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('^')
 
     def visit_title_reference(self,node): #This, in rst, was rendered as typeface font only.
-        self.body.append('`')
+        self.body.append('`*')
 
     def depart_title_reference(self,node):
-        self.body.append('`')
+        self.body.append('*`')
 
     def visit_line_block(self,node):
-        self.body.append('LINE BLOCK: ')
+        self.body.append('[%hardbreaks]\n')
 
     def depart_line_block(self,node):
         self.body.append('')
 
     def visit_line(self,node):
-        nlink="\n---"
+        nlink=""
         self.body.append(nlink)
 
     def depart_line(self,node):
@@ -960,11 +965,12 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append(':CitationRFR')
 
     def visit_substitution_definition(self,node):
-        self.body.append('SBSdef:')
+        name = node.get('names')[0]
+        self.body.append('\n:'+name+': ')
 
     def depart_substitution_definition(self,node):
-        self.body.append(':SBSdef')
-
+        self.body.append('\n')
+        
     def visit_abbreviation(self,node):
         pass # FIXME: We lose explanation this way
 
@@ -994,6 +1000,13 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 
     def depart_graphviz(self,node):
         pass
+
+    def visit_container(self,node):
+        self.body.append('[stem]\n')
+        self.body.append('++++')
+
+    def depart_container(self,node):
+        self.body.append('++++')
 
 if __name__ == "__main__":
     """ To test the writer """
