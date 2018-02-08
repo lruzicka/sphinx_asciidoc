@@ -719,6 +719,14 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     def depart_problematic(self,node):
         self.body.append('')
 
+    def visit_meta(self,node):
+        name = str(node.get('name'))
+        content = str(node.get('content'))
+        self.body.append(':'+name+':'+' '+content)
+
+    def depart_meta(self,node):
+        self.body.append('\n')
+
     def visit_raw(self,node):
         self.body.append('RAW: ')
 
