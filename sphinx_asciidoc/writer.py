@@ -110,6 +110,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.inDesc = False
         self.inList = False
         self.extLinkActive = False
+        self.inAdmonition = False
 
     def astext(self):
         return ''.join(self.body)
@@ -378,7 +379,8 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('GLOSSARY:')
 
     def visit_note(self, node):
-        if self.listLevel > 0:
+        self.inAdmonition = True
+        if self.inList == True:
             nline = '+\n[NOTE]\n'
         else:
             nline = '[NOTE]\n'
@@ -386,11 +388,12 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append(nline+mline)
 
     def depart_note(self, node):
-        if self.listLevel > 0:
+        if self.inList == True:
             nline = '====\n\n'
         else:
             nline = '====\n'
         self.body.append(nline)
+        self.inAdmonition = False
 
     def visit_literal(self, node):
         nline = '`'
@@ -408,7 +411,9 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 
     def visit_literal_block(self, node):
         level = len(self.lists)
-        if level > 0:
+        if self.inAdmonition == True:
+            nline = '\n----\n'
+        elif level > 0:
             nline = '+\n----\n'
         else:
             nline = '\n----\n'
@@ -432,8 +437,8 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('*`')
 
     def visit_tip(self, node):
-        level = len(self.lists)
-        if level > 0:
+        self.inAdmonition = True
+        if self.inList == True:
             nline = '+\n[TIP]\n'
         else:
             nline = '[TIP]\n'
@@ -441,16 +446,16 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append(nline+mline)
 
     def depart_tip(self, node):
-        level = len(self.lists)
-        if level > 0:
+        if self.inList == True:
             nline = '====\n\n'
         else:
             nline = '====\n'
         self.body.append(nline)
+        self.inAdmonition = False
 
     def visit_warning(self, node):
-        level = len(self.lists)
-        if level > 0:
+        self.inAdmonition = True
+        if self.inList == True:
             nline = '+\n[WARNING]\n'
         else:
             nline = '[WARNING]\n'
@@ -458,12 +463,12 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append(nline+mline)
 
     def depart_warning(self, node):
-        level = len(self.lists)
-        if level > 0:
+        if self.inList == True:
             nline = '====\n\n'
         else:
             nline = '====\n'
         self.body.append(nline)
+        self.inAdmonition = False
 
     def visit_subtitle(self, node):
         self.body.append('')
@@ -478,8 +483,8 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('\n')
 
     def visit_important(self, node):
-        level = len(self.lists)
-        if level > 0:
+        self.inAdmonition = True
+        if self.inList == True:
             nline = '+\n[IMPORTANT]\n'
         else:
             nline = '[IMPORTANT]\n'
@@ -487,16 +492,16 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append(nline+mline)
 
     def depart_important(self, node):
-        level = len(self.lists)
-        if level > 0:
+        if self.inList == True:
             nline = '====\n\n'
         else:
             nline = '====\n'
         self.body.append(nline)
+        self.inAdmonition = False
 
     def visit_caution(self, node):
-        level = len(self.lists)
-        if level > 0:
+        self.inAdmonition = True 
+        if self.inList == True:
             nline = '+\n[CAUTION]\n'
         else:
             nline = '[CAUTION]\n'
@@ -504,12 +509,12 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append(nline+mline)
 
     def depart_caution(self, node): # FIXME: change to level = len(self.lists)
-        level = len(self.lists)
-        if level > 0:
+        if self.inList == True:
             nline = '====\n\n'
         else:
             nline = '====\n'
         self.body.append(nline)
+        self.inAdminition = False
 
     def visit_definition_list(self, node):
         self.body.append('\n\n')
@@ -732,6 +737,13 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 
     def depart_transition(self,node):
         self.body.append('\n')
+    
+    def visit_manpage(self,node):
+        self.body.append("_")
+
+    def depart_manpage(self,node):
+        self.body.append('_')
+        pass
     
     def visit_raw(self,node):
         self.body.append('RAW: ')
