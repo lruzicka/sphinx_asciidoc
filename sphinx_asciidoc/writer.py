@@ -111,6 +111,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.inList = False
         self.extLinkActive = False
         self.inAdmonition = False
+        self.tabColSpecs = []
 
     def astext(self):
         return ''.join(self.body)
@@ -634,11 +635,29 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 
     def visit_tgroup(self,node): ## Whole inside of the table
         cols = node['cols']
+        specs = self.tabColSpecs
         col = int(round((100 / cols)))
-        clist = []
-        for i in range(cols):
-            clist.append(str(col))
-        cline = ','.join(clist)
+        clist = [col,]*cols
+        if specs == []:
+            specs = ['<',]*cols
+        #for i in range(cols):
+        #   clist.append(str(col))
+        cline = ''
+        for spec in specs:
+            i = specs.index(spec)
+            if str(spec).lower() == 'r':
+                specs[i] = '>'
+            elif str(spec).lower() == 'c':
+                specs[i] = '^'
+            elif type(spec) != int:
+                specs[i] = '<'        
+        for c in range(len(clist)):
+            #i = clist.index(c)
+            if (c+1) < len(clist):
+                cline = cline + str(specs[c]) + str(clist[c]) + ','
+            else:
+                cline = cline + str(specs[c]) + str(clist[c]) 
+
         specline = '[cols="'+cline+'",options="header"]\n'
         introline = "|===\nh| "
         self.body.append(specline+introline)
@@ -653,6 +672,15 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     def depart_colspec(self,node):
         pass
 
+    def visit_tabular_col_spec(self,node): ## Column specifics
+        specs = node.get("spec").split("|")
+        del specs[-1]
+        del specs[0]
+        self.tabColSpecs = specs
+
+    def depart_tabular_col_spec(self,node):
+        pass
+    
     def visit_thead(self,node): ## Table head
         pass
 
