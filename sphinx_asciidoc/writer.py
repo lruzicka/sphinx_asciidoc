@@ -112,6 +112,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.extLinkActive = False
         self.inAdmonition = False
         self.tabColSpecs = []
+        self.inLineBlock = False
 
     def astext(self):
         return ''.join(self.body)
@@ -148,7 +149,10 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 ##            self.body.append(self.bullet+'')
 ##            self.bullet = None
 ##        self.body.append(toansi(node.astext()))
-        self.body.append(node.astext())
+        if self.inLineBlock == True:
+            self.body.append(node.astext()+' +')
+        else:
+            self.body.append(node.astext())
 
     def depart_Text(self, node):
         pass
@@ -260,7 +264,6 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         pass
 
     def visit_reference(self, node):
-
         #print('IDS: '+str(node.get('ids')))
         #print('REFURI: '+str(node.get('refuri')))
         #print('REFID: '+str(node.get('refid')))
@@ -335,33 +338,28 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 
     def visit_target(self, node): # Create internal inline links.
         if self.extLinkActive == False:
-            try:
-                refid = node.get('ids')
-                refid = refid[-1]
-            except IndexError:
-                refid = False
-            refuri = node.get('refuri')
-            refnames = node.get('names')
+            refid = node.get('refid')
+            self.body.append('[id="%s"]' % refid)
+            #try:
+            #    refid = node.get('refid')
+            #except IndexError:
+            #    refid = False
+            #refuri = node.get('refuri')
+            #refnames = node.get('names')
 
-            if refid != False:
-                if refuri:
-                    if refnames == None:
-                        refnames = ''
-                    else:
-                        refnames = refnames[0]
-                    self.body.append('link:++%s++[%s]' % (refuri,refnames))
-                else:
-                    self.body.append('[[%s]]' % refid)
-            else:
-                pass
+            #if refid != False:
+            #    if refuri:
+            #        if refnames == None:
+            #            refnames = ''
+            #        else:
+            #            refnames = refnames[0]
+            #        self.body.append('link:++%s++[%s]' % (refuri,refnames))
+            #    else:
+            #        self.body.append('[[%s]]' % refid)
+            #else:
+            #    pass
         else:
             pass
-        #try:
-        #    refid = node.get('refid')
-        #    print refid
-        #    self.body.append('[[%s]]' % refid)
-        #except KeyError:
-        #    pass
 
     def depart_target(self, node):
         #self.body.append(']')
@@ -546,11 +544,11 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 
     def visit_image(self,node):
         try:
-            alt = node['alt']
+            alt = node.get('alt')
         except KeyError:
             alt = 'Image'
 
-        uri = node['uri']
+        uri = node.get('uri')
         #tag = str(node)
         #parsed = tag.split(' ')
         #for feature in parsed:
@@ -564,7 +562,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         #        break
         #    else:
         #        alt = 'Image'
-        nline = 'image::'+uri+'['+alt+']'
+        nline = 'image::%s[%s]' % uri, alt
         self.body.append(nline)
 
     def depart_image(self,node):
@@ -622,7 +620,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('\n\n')
 
     def visit_caption(self,node):
-        self.body.append('//.')
+        self.body.append('\n//.')
 
     def depart_caption(self,node):
         self.body.append('\n')
@@ -728,10 +726,12 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('*`')
 
     def visit_line_block(self,node):
-        self.body.append('[%hardbreaks]\n')
+        self.inLineBlock = True
+        self.body.append('\n')
 
     def depart_line_block(self,node):
-        self.body.append('')
+        self.body.append(' ')
+        self.inLineBlock = False
 
     def visit_line(self,node):
         nlink=""
