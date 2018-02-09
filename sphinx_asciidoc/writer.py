@@ -727,6 +727,12 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     def depart_meta(self,node):
         self.body.append('\n')
 
+    def visit_transition(self,node):
+        self.body.append("\n'''")
+
+    def depart_transition(self,node):
+        self.body.append('\n')
+    
     def visit_raw(self,node):
         self.body.append('RAW: ')
 
