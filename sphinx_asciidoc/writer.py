@@ -165,12 +165,17 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         nline = '*'
         self.body.append(nline)
 
-    def visit_index(self,node):
-        #self.body.append('((')
+    def visit_index(self,node): #FIXME
+        #print(node)
+        entrylist = node.get('entries')
+        entries = entrylist[0]
+        term = entries[1]
+        description = entries[2]
+        self.body.append(' [[%s]]' % description)
         pass
 
     def depart_index(self,node):
-        #self.body.append('))')
+        #self.body.append('\n')
         pass
 
     def visit_section(self, node):
@@ -263,10 +268,10 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     def depart_block_quote(self, node):
         pass
 
-    def visit_toctree(self,node):
+    def visit_toc(self,node):
         print("Toctree")
 
-    def depart_toctree(self,node):
+    def depart_toc(self,node):
         pass
 
     def visit_reference(self, node):
