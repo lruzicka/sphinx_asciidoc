@@ -1,4 +1,7 @@
 README.rst
+asciidoc/__init__.py
+asciidoc/builder.py
+asciidoc/writer.py
 sphinx_asciidoc/__init__.py
 sphinx_asciidoc/builder.py
 sphinx_asciidoc/writer.py

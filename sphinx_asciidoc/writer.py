@@ -562,7 +562,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         #        break
         #    else:
         #        alt = 'Image'
-        nline = 'image::%s[%s]' % uri, alt
+        nline = 'image::%s[%s]' % (uri, alt)
         self.body.append(nline)
 
     def depart_image(self,node):
