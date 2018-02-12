@@ -263,18 +263,27 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     def depart_block_quote(self, node):
         pass
 
+    def visit_toctree(self,node):
+        print("Toctree")
+
+    def depart_toctree(self,node):
+        pass
+
     def visit_reference(self, node):
-        #print('IDS: '+str(node.get('ids')))
-        #print('REFURI: '+str(node.get('refuri')))
-        #print('REFID: '+str(node.get('refid')))
+        #print(node)
         self.extLinkActive = True
         uri = node.get('refuri')
         refid = node.get('refid')
-        names = node.get('names')
+        name = node.get('name')
+        aname = node.get('anchorname')
         self.linkType = None
-        if uri:
+        if uri and name:
             self.linkType = 'link'
             nline = 'link:++%s++[' % uri
+            self.body.append(nline)
+        elif uri and aname:
+            self.linkType = 'refx'
+            nline = 'xref:%s[' % uri
             self.body.append(nline)
         elif refid:
             self.linkType = 'refx'
@@ -337,6 +346,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('****')
 
     def visit_target(self, node): # Create internal inline links.
+        print(node)
         if self.extLinkActive == False:
             refid = node.get('refid')
             self.body.append('[id="%s"]' % refid)
@@ -382,7 +392,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         if self.inList == True:
             nline = '+\n[NOTE]\n'
         else:
-            nline = '[NOTE]\n'
+            nline = '\n[NOTE]\n'
         mline = '====\n'
         self.body.append(nline+mline)
 
@@ -440,7 +450,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         if self.inList == True:
             nline = '+\n[TIP]\n'
         else:
-            nline = '[TIP]\n'
+            nline = '\n[TIP]\n'
         mline = '====\n'
         self.body.append(nline+mline)
 
@@ -457,7 +467,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         if self.inList == True:
             nline = '+\n[WARNING]\n'
         else:
-            nline = '[WARNING]\n'
+            nline = '\n[WARNING]\n'
         mline = '====\n'
         self.body.append(nline+mline)
 
@@ -486,7 +496,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         if self.inList == True:
             nline = '+\n[IMPORTANT]\n'
         else:
-            nline = '[IMPORTANT]\n'
+            nline = '\n[IMPORTANT]\n'
         mline = '====\n'
         self.body.append(nline+mline)
 
@@ -503,7 +513,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         if self.inList == True:
             nline = '+\n[CAUTION]\n'
         else:
-            nline = '[CAUTION]\n'
+            nline = '\n[CAUTION]\n'
         mline = '====\n'
         self.body.append(nline+mline)
 
