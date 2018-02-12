@@ -270,7 +270,6 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         pass
 
     def visit_reference(self, node):
-        #print(node)
         self.extLinkActive = True
         uri = node.get('refuri')
         refid = node.get('refid')
