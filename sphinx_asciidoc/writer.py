@@ -276,19 +276,19 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         refid = node.get('refid')
         name = node.get('name')
         aname = node.get('anchorname')
+        internal = node.get('internal')
         self.linkType = None
         if uri and name:
             self.linkType = 'link'
             nline = 'link:++%s++[' % uri
             self.body.append(nline)
-        elif uri and aname:
-            self.linkType = 'refx'
-            nline = 'xref:%s[' % uri
-            self.body.append(nline)
         elif refid:
             self.linkType = 'refx'
             nline = 'xref:%s[' % refid
             self.body.append(nline)
+        elif uri:
+            self.linkType = 'refx'
+            self.body.append('xref:%s[' % uri)
         else:
             pass
 
@@ -346,34 +346,22 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('****')
 
     def visit_target(self, node): # Create internal inline links.
-        print(node)
-        if self.extLinkActive == False:
+        try:
             refid = node.get('refid')
+            ids = node.get('ids')
+            refuri = node.get('refuri')
+        except IndexError:
+            pass
+        
+        if refid:
             self.body.append('[id="%s"]' % refid)
-            #try:
-            #    refid = node.get('refid')
-            #except IndexError:
-            #    refid = False
-            #refuri = node.get('refuri')
-            #refnames = node.get('names')
-
-            #if refid != False:
-            #    if refuri:
-            #        if refnames == None:
-            #            refnames = ''
-            #        else:
-            #            refnames = refnames[0]
-            #        self.body.append('link:++%s++[%s]' % (refuri,refnames))
-            #    else:
-            #        self.body.append('[[%s]]' % refid)
-            #else:
-            #    pass
+        elif ids and refuri:
+            self.body.append('')
         else:
             pass
-
+            
     def depart_target(self, node):
-        #self.body.append(']')
-        self.extLinkActive = False
+        self.body.append(']')
 
     def visit_compound(self, node): 
         self.body.append('====')
