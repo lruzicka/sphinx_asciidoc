@@ -115,7 +115,10 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.inLineBlock = False
 
     def astext(self):
-        return ''.join(self.body)
+        try:
+            return ''.join(self.body)
+        except UnicodeDecodeError:
+            pass
 
     def visit_document(self, node):
         #self.body.append('Start document')
@@ -278,6 +281,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append(' :TOCTREE')
 
     def visit_reference(self, node):
+        print(node)
         self.extLinkActive = True
         uri = node.get('refuri')
         refid = node.get('refid')
@@ -1039,7 +1043,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         pass # FIXME: We lose explanation this way
 
     def visit_seealso(self,node):
-        self.body.append('See also: ')
+        self.body.append('See also: \n')
 
     def depart_seealso(self,node):
         pass
