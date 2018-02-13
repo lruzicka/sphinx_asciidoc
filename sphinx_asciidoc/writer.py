@@ -1043,7 +1043,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         pass # FIXME: We lose explanation this way
 
     def visit_seealso(self,node):
-        self.body.append('See also: \n')
+        self.body.append('\nSee also: \n')
 
     def depart_seealso(self,node):
         pass
