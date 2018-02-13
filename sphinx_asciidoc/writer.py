@@ -14,10 +14,10 @@
    Copyright: This module has been placed in the public domain.
 """
 from docutils import writers, nodes
-import sys
+import sys, os
 
 from sphinx import addnodes
-#from sphinx.deprecation import RemovedInSphinx16Warning
+from docutils.core import publish_parts, publish_from_doctree
 from sphinx.locale import admonitionlabels, _
 
 class AsciiDocWriter(writers.Writer):
@@ -113,17 +113,16 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.inAdmonition = False
         self.tabColSpecs = []
         self.inLineBlock = False
+        self.targetFile = ''
 
     def astext(self):
         try:
             return ''.join(self.body)
         except UnicodeDecodeError:
             pass
-
+    
     def visit_document(self, node):
-        #self.body.append('Start document')
         pass
-
     def depart_document(self, node):
         pass
 
@@ -169,7 +168,6 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append(nline)
 
     def visit_index(self,node): #FIXME
-        #print(node)
         entrylist = node.get('entries')
         entries = entrylist[0]
         term = entries[1]
@@ -224,7 +222,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.lists.append('bulleted')
         if self.turnsInList == 0:
             self.body.append('\n')
-        self.turnsInList = self.turnsInList + 1
+        self.turnsInList += 1
 
     def depart_bullet_list(self, node):
         if self.listLevel == -1:
@@ -232,7 +230,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         else:
             self.body.append('\n')
         self.lists.pop(-1)
-        self.turnsInList = 0
+        self.turnsInList -= 1
         self.inList = False
 
     def visit_enumerated_list(self, node): # Ordered list
@@ -240,26 +238,27 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.lists.append('numbered')
         enumeration = node['enumtype']
         self.body.append('\n['+enumeration+']\n')
-        self.turnsInList = self.turnsInList + 1
+        self.turnsInList += 1
 
     def depart_enumerated_list(self,node):
         self.lists.pop(-1)
-        self.turnsInList = 0
+        self.turnsInList -= 1
         self.inList = False
 
     def visit_list_item(self, node):
         classes = node.get('classes')
         level = len(self.lists)
-        if 'bulleted' in self.lists:
+        
+        if 'toctree' in str(classes):
+            nline = ''
+        elif 'bulleted' in self.lists:
             nline = bulletIndent[level]
         elif 'numbered' in self.lists:
             nline = enumIndent[level]
         else:
             nline = '\nList indentation error!\n'
         self.body.append(nline)
-        if 'toctree' in str(classes):
-            self.body.append('TOC: %s' % str(classes))
-        self.turnsInList = self.turnsInList + 1
+        #self.turnsInList = self.turnsInList + 1
 
     def depart_list_item(self, node):
         if self.inTable == True:
@@ -275,13 +274,11 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 
     def visit_toctree(self,node):
         self.body.append('TOCTREE: ')
-        print("Toctree")
 
     def depart_toctree(self,node):
         self.body.append(' :TOCTREE')
 
     def visit_reference(self, node):
-        print(node)
         self.extLinkActive = True
         uri = node.get('refuri')
         refid = node.get('refid')
@@ -289,7 +286,10 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         aname = node.get('anchorname')
         internal = node.get('internal')
         self.linkType = None
-        if uri and name:
+        if internal == True and aname == '':
+            self.linkType = 'include'
+            self.body.append('include::%s[' % uri)
+        elif uri and name:
             self.linkType = 'link'
             nline = 'link:++%s++[' % uri
             self.body.append(nline)
@@ -300,17 +300,11 @@ class AsciiDocTranslator(nodes.NodeVisitor):
             self.linkType = 'refx'
             self.body.append('xref:%s[' % uri)
         else:
-            print("Warning: Problem with references!")
-            self.body.append(str(node))
+            pass
             #print(node)
 
     def depart_reference(self, node):
-        if self.linkType == 'link':
-            self.body.append(']')
-        elif self.linkType == 'refx':
-            self.body.append(']')
-        else:
-            pass
+        self.body.append(']')
 
     def visit_docinfo(self, node):
         nline = 'Document information: '
@@ -377,10 +371,10 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('')
 
     def visit_compound(self, node): 
-        self.body.append('====')
+        self.body.append('')
 
     def depart_compound(self, node):
-        self.body.append('====\n')
+        self.body.append('\n')
 
     def visit_glossary(self, node): #It seems that this can be passed.
         pass
@@ -631,9 +625,10 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('\n\n')
 
     def visit_caption(self,node):
-        self.body.append('\n//.')
+        self.body.append('\n:toctitle: ')
 
     def depart_caption(self,node):
+        self.body.append('\n')
         self.body.append('\n')
 
     def visit_table(self,node): ## Whole table element
@@ -772,7 +767,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('\n')
 
     def visit_transition(self,node):
-        self.body.append("\n'''")
+        self.body.append("\n* * *")
 
     def depart_transition(self,node):
         self.body.append('\n')

@@ -14,6 +14,8 @@ import codecs
 from os import path
 
 from docutils.io import StringOutput
+from docutils import nodes
+from docutils.core import Publisher
 
 from sphinx.builders import Builder
 from sphinx.util.osutil import ensuredir, os_path
@@ -49,7 +51,13 @@ class AsciiDocBuilder(Builder):
                 pass
 
     def get_target_uri(self, docname, typ=None):
-        return ''
+        return docname + self.out_suffix
+
+    def get_toctree(self, docname, collapse=True, **kwds):
+        if 'includehidden' not in kwds:
+            kwds['includehidden'] = False
+        toctree = TocTree(self.env).get_toctree_for(docname, self, collapse, **kwds)        
+        return self.render_partial(toctree)['fragment']
 
     def prepare_writing(self, docnames):
         self.writer = AsciiDocWriter()
