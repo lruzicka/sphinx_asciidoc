@@ -362,7 +362,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
             pass
         
         if refid:
-            self.body.append('[id="%s"' % refid)
+            self.body.append('[id="%s"]' % refid)
         elif ids and refuri:
             self.body.append('')
         else:
@@ -370,7 +370,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
             self.body.append("Warning: Problem with targets!")
             
     def depart_target(self, node):
-        self.body.append(']')
+        self.body.append('')
 
     def visit_compound(self, node): 
         self.body.append('====')
