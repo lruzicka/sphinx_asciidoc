@@ -245,15 +245,17 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.inList = False
 
     def visit_list_item(self, node):
+        classes = node.get('classes')
         level = len(self.lists)
         if 'bulleted' in self.lists:
-            sign = bulletIndent[level]
+            nline = bulletIndent[level]
         elif 'numbered' in self.lists:
-            sign = enumIndent[level]
+            nline = enumIndent[level]
         else:
-            sign = '\nList indentation error!\n'
-        nline = sign
+            nline = '\nList indentation error!\n'
         self.body.append(nline)
+        if 'toctree' in str(classes):
+            self.body.append('TOC: %s' % str(classes))
         self.turnsInList = self.turnsInList + 1
 
     def depart_list_item(self, node):
@@ -268,11 +270,12 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     def depart_block_quote(self, node):
         pass
 
-    def visit_toc(self,node):
+    def visit_toctree(self,node):
+        self.body.append('TOCTREE: ')
         print("Toctree")
 
-    def depart_toc(self,node):
-        pass
+    def depart_toctree(self,node):
+        self.body.append(' :TOCTREE')
 
     def visit_reference(self, node):
         self.extLinkActive = True
@@ -288,13 +291,14 @@ class AsciiDocTranslator(nodes.NodeVisitor):
             self.body.append(nline)
         elif refid:
             self.linkType = 'refx'
-            nline = 'xref:%s[' % refid
-            self.body.append(nline)
+            self.body.append('xref:%s[' % refid)
         elif uri:
             self.linkType = 'refx'
             self.body.append('xref:%s[' % uri)
         else:
-            pass
+            print("Warning: Problem with references!")
+            self.body.append(str(node))
+            #print(node)
 
     def depart_reference(self, node):
         if self.linkType == 'link':
@@ -358,11 +362,12 @@ class AsciiDocTranslator(nodes.NodeVisitor):
             pass
         
         if refid:
-            self.body.append('[id="%s"]' % refid)
+            self.body.append('[id="%s"' % refid)
         elif ids and refuri:
             self.body.append('')
         else:
-            pass
+            print("Warning: Problem with targets!")
+            self.body.append("Warning: Problem with targets!")
             
     def depart_target(self, node):
         self.body.append(']')
@@ -373,11 +378,11 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     def depart_compound(self, node):
         self.body.append('====\n')
 
-    def visit_glossary(self, node):
-        self.body.append('GLOSSARY:')
+    def visit_glossary(self, node): #It seems that this can be passed.
+        pass
 
     def depart_glossary(self, node):
-        self.body.append('GLOSSARY:')
+        pass
 
     def visit_note(self, node):
         self.inAdmonition = True
