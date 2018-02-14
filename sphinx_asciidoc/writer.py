@@ -225,25 +225,28 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.turnsInList += 1
 
     def depart_bullet_list(self, node):
-        if self.listLevel == -1:
-            self.body.append('\n\n')
-        else:
-            self.body.append('\n')
+        self.body.append('\n')
         self.lists.pop(-1)
         self.turnsInList -= 1
-        self.inList = False
+        if self.turnsInList <= 0:
+            self.inList = False
 
     def visit_enumerated_list(self, node): # Ordered list
+        if self.turnsInList == 0:
+            enumeration = node['enumtype']
+        else:
+            enumeration = False
         self.inList = True
         self.lists.append('numbered')
-        enumeration = node['enumtype']
-        self.body.append('\n['+enumeration+']\n')
+        if enumeration != False:
+            self.body.append('\n['+enumeration+']\n')
         self.turnsInList += 1
 
     def depart_enumerated_list(self,node):
         self.lists.pop(-1)
         self.turnsInList -= 1
-        self.inList = False
+        if self.turnsInList <= 0:
+            self.inList = False
 
     def visit_list_item(self, node):
         classes = node.get('classes')
@@ -309,7 +312,10 @@ class AsciiDocTranslator(nodes.NodeVisitor):
             if '.adoc' in uri:
                 self.body.append('xref:fileref=%s[' % uri)
             else:
-                self.body.append('xref:%s[' % uri)
+                if uri.startswith('mailto') or uri.startswith('http'):
+                    self.body.append('%s[' % uri)
+                else:
+                    self.body.append('xref:%s[' % uri)
         else:
             pass
             #print(node)
