@@ -298,6 +298,11 @@ class AsciiDocTranslator(nodes.NodeVisitor):
             self.body.append('xref:%s[' % refid)
         elif uri:
             self.linkType = 'refx'
+            try:
+                uri = uri.split('#')
+                uri = uri[1]
+            except IndexError:
+                uri = str(uri[0])
             self.body.append('xref:%s[' % uri)
         else:
             pass
