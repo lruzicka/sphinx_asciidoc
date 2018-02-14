@@ -113,7 +113,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.inAdmonition = False
         self.tabColSpecs = []
         self.inLineBlock = False
-        self.targetFile = ''
+        self.inToctree = False
 
     def astext(self):
         try:
@@ -273,10 +273,10 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         pass
 
     def visit_toctree(self,node):
-        self.body.append('TOCTREE: ')
+        pass
 
     def depart_toctree(self,node):
-        self.body.append(' :TOCTREE')
+        pass
 
     def visit_reference(self, node):
         self.extLinkActive = True
@@ -286,7 +286,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         aname = node.get('anchorname')
         internal = node.get('internal')
         self.linkType = None
-        if internal == True and aname == '':
+        if internal == True and aname == '' and self.inToctree == True:
             self.linkType = 'include'
             self.body.append('include::%s[' % uri)
         elif uri and name:
@@ -295,7 +295,10 @@ class AsciiDocTranslator(nodes.NodeVisitor):
             self.body.append(nline)
         elif refid:
             self.linkType = 'refx'
-            self.body.append('xref:%s[' % refid)
+            if self.inToctree == False:
+                self.body.append('xref:%s[' % refid)
+            else:
+                pass
         elif uri:
             self.linkType = 'refx'
             try:
@@ -303,7 +306,10 @@ class AsciiDocTranslator(nodes.NodeVisitor):
                 uri = uri[1]
             except IndexError:
                 uri = str(uri[0])
-            self.body.append('xref:%s[' % uri)
+            if '.adoc' in uri:
+                self.body.append('xref:fileref=%s[' % uri)
+            else:
+                self.body.append('xref:%s[' % uri)
         else:
             pass
             #print(node)
@@ -376,10 +382,12 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('')
 
     def visit_compound(self, node): 
+        self.inToctree = True
         self.body.append('')
 
     def depart_compound(self, node):
         self.body.append('\n')
+        self.inToctree = False
 
     def visit_glossary(self, node): #It seems that this can be passed.
         pass
@@ -555,24 +563,13 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     def visit_image(self,node):
         try:
             alt = node.get('alt')
+            if alt == None:
+                alt = 'Unnamed image'
         except KeyError:
-            alt = 'Image'
+            alt = 'Unnamed image'
 
         uri = node.get('uri')
-        #tag = str(node)
-        #parsed = tag.split(' ')
-        #for feature in parsed:
-        #    if 'uri' in feature:
-        #        ptag = feature.split('"')
-        #        path = ptag[1]
-        #for feature in parsed:
-        #    if 'alt' in feature:
-        #        palt = feature.split('"')
-        #        alt = palt[1]
-        #        break
-        #    else:
-        #        alt = 'Image'
-        nline = 'image::%s[%s]' % (uri, alt)
+        nline = '\nimage::%s[%s]' % (uri, alt)
         self.body.append(nline)
 
     def depart_image(self,node):
@@ -591,8 +588,6 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append(nline)
 
     def visit_footnote(self,node):
-        #nline = "footnote:["
-        #self.body.append(nline)
         pass
 
     def depart_footnote(self,node):
