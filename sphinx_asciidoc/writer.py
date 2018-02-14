@@ -105,6 +105,8 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.listLevel = len(self.lists)
         self.bullet = '*' # next one to add to the next paragraph
         self.figures = 0 # Counts figures for reference targets
+        self.images = 0
+        self.idcount = 0
         self.inTable = False
         self.turnsInList = 0
         self.inDesc = False
@@ -114,6 +116,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.tabColSpecs = []
         self.inLineBlock = False
         self.inToctree = False
+        self.inUseless = False
 
     def astext(self):
         try:
@@ -315,14 +318,18 @@ class AsciiDocTranslator(nodes.NodeVisitor):
                 if uri.startswith('mailto') or uri.startswith('http'):
                     self.body.append('%s[' % uri)
                 else:
-                    self.body.append('xref:%s[' % uri)
+                    if aname == ('#'+str(uri)):
+                        self.body.append('\n//')
+                        self.inUseless = True
+                    else:
+                        self.body.append('xref:%s[' % uri)
         else:
             pass
             #print(node)
 
     def depart_reference(self, node):
         self.body.append(']')
-
+    
     def visit_docinfo(self, node):
         nline = 'Document information: '
         self.body.append(nline)
@@ -374,8 +381,8 @@ class AsciiDocTranslator(nodes.NodeVisitor):
             ids = node.get('ids')
             refuri = node.get('refuri')
         except IndexError:
-            pass
-        
+            self.idcount += 1 
+            refid = 'automatic-id%s' % self.idcount
         if refid:
             self.body.append('[id="%s"]' % refid)
         elif ids and refuri:
@@ -552,9 +559,8 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('\n')
 
     def visit_term(self, node):
-        #nline = ''
-        #self.body.append(nline)
-        pass
+        nline = ''
+        self.body.append(nline)
 
     def depart_term(self, node):
         self.body.append(':: ')
@@ -623,7 +629,10 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     def visit_figure(self, node):
         ids = str(node['ids'])
         count = str(self.figures)
-        nline = '\n[[ids]]\n'
+        if len(ids) == 0:
+            self.figures += 1
+            ids = 'Figure' + str(self.figures)
+        nline = '\n[[%s]]\n' % ids
         mline = '.'+ids+'\n'
         self.body.append(nline+mline)
 
