@@ -14,7 +14,7 @@
    Copyright: This module has been placed in the public domain.
 """
 from docutils import writers, nodes
-import sys, os
+import sys, os, json
 
 from sphinx import addnodes
 from docutils.core import publish_parts, publish_from_doctree
@@ -117,6 +117,8 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.inLineBlock = False
         self.inToctree = False
         self.inUseless = False
+        self.sourceFile = ''
+        self.idPool = []
 
     def astext(self):
         try:
@@ -125,8 +127,22 @@ class AsciiDocTranslator(nodes.NodeVisitor):
             pass
     
     def visit_document(self, node):
+        source = node.get('source').split('/')
+        source = source[-1].split('.')
+        self.sourceFile = source[0]
+        
+        #try:
+        #    with open('idPool.temp') as pool:
+        #        self.idPool = json.load(pool)
+        #        print('File opened')
+        #except:
+        #    self.idPool = []
         pass
+
     def depart_document(self, node):
+        #with open('idPool.temp','w') as pool:
+        #    json.dump(self.idPool, pool)
+        #    print('File created')        
         pass
 
     def visit_title(self, node):
@@ -384,7 +400,14 @@ class AsciiDocTranslator(nodes.NodeVisitor):
             self.idcount += 1 
             refid = 'automatic-id%s' % self.idcount
         if refid:
-            self.body.append('[id="%s"]' % refid)
+            while True:
+                if refid not in self.idPool:
+                    self.body.append('[id="%s"]' % refid)
+                    self.idPool.append(refid)
+                    break
+                else:
+                    refid = refid + '-duplicate'
+                    self.body.append('[id="%s"]' % refid)
         elif ids and refuri:
             self.body.append('')
         else:
@@ -627,11 +650,17 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         pass
 
     def visit_figure(self, node):
-        ids = str(node['ids'])
+        ids = node['ids']
         count = str(self.figures)
         if len(ids) == 0:
             self.figures += 1
-            ids = 'Figure' + str(self.figures)
+            ids = self.sourceFile + '-figure-' + str(self.figures)
+        while True:
+            if ids not in self.idPool:
+                self.idPool.append(ids)
+                break
+            else:
+                ids = ids + '-duplicate'
         nline = '\n[[%s]]\n' % ids
         mline = '.'+ids+'\n'
         self.body.append(nline+mline)
