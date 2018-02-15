@@ -310,7 +310,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.linkType = None
         if internal == True and aname == '' and self.inToctree == True:
             self.linkType = 'include'
-            self.body.append('include::%s[' % uri)
+            self.body.append('include::%s[leveloffset=+1][' % uri)
         elif uri and name:
             self.linkType = 'link'
             nline = 'link:++%s++[' % uri

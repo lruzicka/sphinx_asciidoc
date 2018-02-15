@@ -58,25 +58,25 @@ Known issues
 ~~~~~~~~~~~~
 
 Converted Toctree includes chapters twice
-    **Sphinx** uses the ``.. toctree::`` directive to collect single *rst* files and create a complete book to present on the web page. **Asciidoctor** is not capable of something similar, so those links were replaced by ``include`` directives. A problem is, that those includes are sometimes used more than once, first in the master file and then in the submaster files. 
-    In order to get proper results, you have to edit the master file and delete includes that include files from submaster files to get rid of duplicities. Alernatively, you can delete all includes from any subfiles and only leave those in the master file.
+    **Sphinx** uses the ``.. toctree::`` directive to collect single *rst* files and create a complete book to present on the web page. **Asciidoctor** is not capable of something similar, so those links were replaced by ``include`` directives. A problem is, that those includes are sometimes used more than once, first in the master file and then in the submaster files. In order to get proper results, you have to edit the master file and delete includes that include files from submaster files to get rid of duplicities. Alernatively, you can delete all includes from any subfiles and only leave those in the master file.
 
 Referencing to target files instead to IDs
-    Blablabla
+    In **Sphinx**, you can either send a reference to a target (represented by an ID) or to a source file. The result will be similar. On the web, both references will bring you to a given location. The ``:doc:`` refernce will point towards the beginning of the text provided by the source file. **Asciidoc** does not use anything like that and I have not been able to find a complete solution for this issue yet. Now, the convertor creates false reference directives that you have to replace manually or programatically. You can find those references because in their definition, the string ``#fileref`` has been placed.
+
+reST markup conflicts with Asciidoc markup
+    Sometimes, especially if you want to show pieces of *reST* code and use a code block, the markup will not be translated, but rather gets transfered directly into the *asciidoc* files where it conflicts with **Asciidoctor**, rendering erroneously. If you experience such problems, you have to use escape characters manually in the resulting *asciidoc* files.
 
 
 Future improvements
 --------------------
 
-In the future, I will try to focus on:
+In the future:
 
-1. implementation of formatting features of the nodes that only produce plain
-   text,
-2. implement the not yet implemented Sphinx and Docutils nodes, so that
+1. reported issues should be fixed, whenever somebody experiences such an error or a new directive will appear in Sphinx,
+2. try to solve the known issues to make the translation work flawlessly
+3. implement the not yet implemented Sphinx and Docutils nodes, so that
    the AsciiDoc files use all possible features of the original reST and
-   Sphinx format,
-3. improve the visitors (conversion functions) so that the AsciiDoc
-   output is always flawless and possibly error free.
+   Sphinx format.
 
 Installing the **sphinx_asciidoc** package
 ------------------------------------------
@@ -100,6 +100,4 @@ The built documentation is placed in the ``./build/asciidoc`` directory.
 Disclaimer
 ----------
 
-You can already use the software, but you shall take it as not fully
-developed, so there still may be problems and some features may not work
-properly or at all.
+You can freely use the software, but you should be aware that there might problems arise that would need your manual assistance to make the translation error free. Always check that the files have been properly converted before you publish your content.
