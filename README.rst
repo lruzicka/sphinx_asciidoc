@@ -1,8 +1,9 @@
+#################################################
 AsciiDoc Builder and Writer for Sphinx (asciidoc)
-=================================================
+#################################################
 
 Introduction
-------------
+~~~~~~~~~~~~
 
 Sphinx is used to build documentation from reST source files using
 Docutils. While there are many Sphinx output writers, such as html,
@@ -18,7 +19,7 @@ writer for Sphinx, as well as a simple reST to AsciiDoc convertor.
 It primarily uses Python 3, but should be fine with 2.7.
 
 Standalone usage
-----------------
+~~~~~~~~~~~~~~~~
 
 You can also use the ``./asciidoc/writer.py`` as a simple convertor of
 single reST files based on **docutils** reST format. 
@@ -31,28 +32,39 @@ When the script finishes, it creates a new asciidoc file with the same
 name and the ``.adoc`` extension.
 
 Current status
---------------
+~~~~~~~~~~~~~~
 
-The extension is now a beta 0.9.1 version. It understands the majority
-of Docutils markup and produces a usable asciidoc format, that can be
-processed with Asciidoctor. However, there are improvements needed.
+The extension is now a 1.0.0 version. It understands the majority
+of the Docutils markup and produces a usable *asciidoc* format, that can be
+processed with **Asciidoctor**. However, there are some issues that have not been solved
+yet, since **Asciidoctor** does not support similar functionality, or this funcionality
+is not possible due to **Asciidoctor**'s architecture. There might be improvements in the future.
 
-Note, that the convertor includes files with ``include::`` directives,
-that is it puts their content directly into the referencing file. The
-convertor does not preserve individual files for included content.
+.. note::
+    The conversion may fail because of ``NotImplemented Error`` that is
+    caused when the convertor does not understand how to interpret a
+    Sphinx directive. Some of the nodes are only partially implemented. 
+    They do not throw out an error, but they do not know how to convert the
+    content either. Instead, they pass the content as plain text and wrap it
+    with the name of the directive, so that users know where the conversion 
+    fails. 
 
-The conversion may fail because of ``NotImplemented Error`` that is
-caused when the convertor does not understand how to interpret a
-Sphinx directive. Some of the nodes are only partially implemented. 
-They do not throw out an error, but they do not know how to convert the
-content either. Instead, they pass the content as plain text and wrap it
-with the name of the directive, so that users know where the conversion 
-fails. 
+    If you experience such troubles, please report this in the *issues* of this 
+    Github project (http://github.com/lruzicka/sphinx-asciidoc) and describe which
+    directive is not rendered and how do you think it should be rendered in asciidoc or
+    how should the html rendering from **Asciidoctor** look like.
 
-If you experience such troubles, please report this in the *issues* of this 
-Github project (http://github.com/lruzicka/sphinx-asciidoc) and describe which
-directive is not rendered and how do you think it should be rendered in asciidoc or
-how should the html rendering from **Asciidoctor** look like.
+Known issues
+~~~~~~~~~~~~
+
+Converted Toctree includes chapters twice
+    **Sphinx** uses the ``.. toctree::`` directive to collect single *rst* files and     create a complete book to present on the web page. **Asciidoctor** is not capable of something
+similar, so those links were replaced by ``include`` directives. A problem is, that those includes are sometimes used more than once, first in the master file and then in the submaster files. 
+    In order to get proper results, you have to edit the master file and delete includes that include files from submaster files to get rid of duplicities. Alernatively, you can delete all includes from any subfiles and only leave those in the master file.
+
+Referencing to target files instead to IDs
+    Blablabla
+
 
 Future improvements
 --------------------
