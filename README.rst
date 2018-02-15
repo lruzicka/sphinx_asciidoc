@@ -58,8 +58,7 @@ Known issues
 ~~~~~~~~~~~~
 
 Converted Toctree includes chapters twice
-    **Sphinx** uses the ``.. toctree::`` directive to collect single *rst* files and     create a complete book to present on the web page. **Asciidoctor** is not capable of something
-similar, so those links were replaced by ``include`` directives. A problem is, that those includes are sometimes used more than once, first in the master file and then in the submaster files. 
+    **Sphinx** uses the ``.. toctree::`` directive to collect single *rst* files and create a complete book to present on the web page. **Asciidoctor** is not capable of something similar, so those links were replaced by ``include`` directives. A problem is, that those includes are sometimes used more than once, first in the master file and then in the submaster files. 
     In order to get proper results, you have to edit the master file and delete includes that include files from submaster files to get rid of duplicities. Alernatively, you can delete all includes from any subfiles and only leave those in the master file.
 
 Referencing to target files instead to IDs
