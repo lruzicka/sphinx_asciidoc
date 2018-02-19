@@ -24,7 +24,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 setup(
     name='sphinx_asciidoc',  # Required
-    version='1.0.0',  # Required
+    version='1.0.1',  # Required
     description='A custom Sphinx builder to make asciidoc output',  # Required
     long_description=long_description,  # Optional
     url='https://github.com/lruzicka/sphinx-asciidoc',  # Optional
