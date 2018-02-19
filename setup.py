@@ -58,6 +58,9 @@ setup(
         'sphinx.builders': [
             'asciidoc = sphinx_asciidoc:AsciiDocBuilder',
         ],
+        'console_scripts':[
+            'askidog = sphinx_asciidoc.__main__:writer'
+        ],
     },
 )
 
