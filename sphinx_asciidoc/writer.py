@@ -54,10 +54,12 @@ def toansi(text):
 
 sectionEquals = { # Stores values for different section levels
     -1: '',
-     0: '= ', #title
-     1: '== ', # section
-     2: '=== ', # subsection
-     3: '==== ', # subsubsection
+     0: '= ', # Document Title (Level 0)
+     1: '== ', # Level 1 Section Title
+     2: '=== ', # Level 2 Section Title
+     3: '==== ', # Level 3 Section Title
+     4: '===== ', # Level 4 Section Title
+     5: '====== ', # Level 5 Section Title
     }
 
 
