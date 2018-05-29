@@ -119,6 +119,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.inLineBlock = False
         self.inToctree = False
         self.inUseless = False
+        self.inGlossary = False
         self.sourceFile = ''
         self.idPool = []
 
@@ -127,12 +128,12 @@ class AsciiDocTranslator(nodes.NodeVisitor):
             return ''.join(self.body)
         except UnicodeDecodeError:
             pass
-    
+
     def visit_document(self, node):
         source = node.get('source').split('/')
         source = source[-1].split('.')
         self.sourceFile = source[0]
-        
+
         #try:
         #    with open('idPool.temp') as pool:
         #        self.idPool = json.load(pool)
@@ -144,7 +145,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     def depart_document(self, node):
         #with open('idPool.temp','w') as pool:
         #    json.dump(self.idPool, pool)
-        #    print('File created')        
+        #    print('File created')
         pass
 
     def visit_title(self, node):
@@ -272,7 +273,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
     def visit_list_item(self, node):
         classes = node.get('classes')
         level = len(self.lists)
-        
+
         if 'toctree' in str(classes):
             nline = ''
         elif 'bulleted' in self.lists:
@@ -347,7 +348,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 
     def depart_reference(self, node):
         self.body.append(']')
-    
+
     def visit_docinfo(self, node):
         nline = 'Document information: '
         self.body.append(nline)
@@ -387,7 +388,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('[verse]\n.')
     def depart_topic(self, node):
         self.body.append('')
-    
+
     def visit_sidebar(self, node):
         self.body.append('****\n')
     def depart_sidebar(self, node):
@@ -399,7 +400,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
             ids = node.get('ids')
             refuri = node.get('refuri')
         except IndexError:
-            self.idcount += 1 
+            self.idcount += 1
             refid = 'automatic-id%s' % self.idcount
         if refid:
             while True:
@@ -415,11 +416,11 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         else:
             print("Warning: Problem with targets!")
             self.body.append("Warning: Problem with targets!")
-            
+
     def depart_target(self, node):
         self.body.append('')
 
-    def visit_compound(self, node): 
+    def visit_compound(self, node):
         self.inToctree = True
         self.body.append('')
 
@@ -428,10 +429,10 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.inToctree = False
 
     def visit_glossary(self, node): #It seems that this can be passed.
-        pass
+        self.inGlossary = True
 
     def depart_glossary(self, node):
-        pass
+        self.inGlossary = False
 
     def visit_note(self, node):
         self.inAdmonition = True
@@ -483,7 +484,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 
     def depart_emphasis(self, node):
         self.body.append('_')
-    
+
     def visit_literal_emphasis(self, node):
         nline = ' `*'
         self.body.append(nline)
@@ -555,7 +556,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.inAdmonition = False
 
     def visit_caution(self, node):
-        self.inAdmonition = True 
+        self.inAdmonition = True
         if self.inList == True:
             nline = '+\n[CAUTION]\n'
         else:
@@ -584,11 +585,17 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('\n')
 
     def visit_term(self, node):
-        nline = ''
-        self.body.append(nline)
+        if self.inGlossary == True:
+            self.visit_title(node)
+        else:
+            nline = ''
+            self.body.append(nline)
 
     def depart_term(self, node):
-        self.body.append(':: ')
+        if self.inGlossary == True:
+            self.depart_title(node)
+        else:
+            self.body.append(':: ')
 
     def visit_definition(self, node):
         nline = '\n'
@@ -700,13 +707,13 @@ class AsciiDocTranslator(nodes.NodeVisitor):
             elif str(spec).lower() == 'c':
                 specs[i] = '^'
             elif type(spec) != int:
-                specs[i] = '<'        
+                specs[i] = '<'
         for c in range(len(clist)):
             #i = clist.index(c)
             if (c+1) < len(clist):
                 cline = cline + str(specs[c]) + str(clist[c]) + ','
             else:
-                cline = cline + str(specs[c]) + str(clist[c]) 
+                cline = cline + str(specs[c]) + str(clist[c])
 
         specline = '[cols="'+cline+'",options="header"]\n'
         introline = "|===\nh| "
@@ -730,7 +737,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 
     def depart_tabular_col_spec(self,node):
         pass
-    
+
     def visit_thead(self,node): ## Table head
         pass
 
@@ -817,14 +824,14 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 
     def depart_transition(self,node):
         self.body.append('\n')
-    
+
     def visit_manpage(self,node):
         self.body.append("_")
 
     def depart_manpage(self,node):
         self.body.append('_')
         pass
-    
+
     def visit_raw(self,node):
         self.body.append('RAW: ')
 
@@ -1076,7 +1083,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 
     def depart_substitution_definition(self,node):
         self.body.append('\n')
-        
+
     def visit_abbreviation(self,node):
         pass # FIXME: We lose explanation this way
 
@@ -1088,7 +1095,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 
     def depart_seealso(self,node):
         pass
-    
+
     def visit_todo_node(self,node):
         self.body.append('To do: ')
 
@@ -1100,7 +1107,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 
     def depart_download_reference(self,node):
         pass
-    
+
     def visit_graphviz(self,node):
         self.body.append('Graphviz: ')
 
