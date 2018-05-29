@@ -586,14 +586,19 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 
     def visit_term(self, node):
         if self.inGlossary == True:
-            self.visit_title(node)
+            level = self.section_level
+            try:
+                tstr = sectionEquals[level]
+            except KeyError:
+                tstr = '= '
+            self.body.append('\n\n%s ' % tstr)
         else:
             nline = ''
             self.body.append(nline)
 
     def depart_term(self, node):
         if self.inGlossary == True:
-            self.depart_title(node)
+            self.body.append('\n\n')
         else:
             self.body.append(':: ')
 
