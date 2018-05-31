@@ -579,20 +579,16 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('\n\n')
 
     def visit_definition_list_item(self, node):
-        if self.inGlossary == True:
-            self.section_level += 1
         self.body.append('')
 
     def depart_definition_list_item(self, node):
         self.body.append('\n')
-        if self.inGlossary == True:
-            self.section_level -= 1
 
     def visit_term(self, node):
         if self.inGlossary == True:
-            level = self.section_level
+            self.section_level += 1
             try:
-                tstr = sectionEquals[level]
+                tstr = sectionEquals[self.section_level]
             except KeyError:
                 tstr = '= '
             self.body.append('\n\n%s ' % tstr)
@@ -612,6 +608,9 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 
     def depart_definition(self,node):
         self.body.append('\n\n')
+        if self.inGlossary == True:
+            self.section_level -= 1
+
 
     def visit_image(self,node):
         try:
