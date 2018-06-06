@@ -117,6 +117,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.inAdmonition = False
         self.tabColSpecs = []
         self.inLineBlock = False
+        self.inLiteralBlock = False
         self.inToctree = False
         self.inUseless = False
         self.inGlossary = False
@@ -311,7 +312,9 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         aname = node.get('anchorname')
         internal = node.get('internal')
         self.linkType = None
-        if internal == True and aname == '' and self.inToctree == True:
+        if self.inLiteralBlock:
+            pass
+        elif internal == True and aname == '' and self.inToctree == True:
             self.linkType = 'include'
             self.body.append('include::%s[leveloffset=+1][' % uri)
         elif uri and name:
@@ -347,7 +350,8 @@ class AsciiDocTranslator(nodes.NodeVisitor):
             #print(node)
 
     def depart_reference(self, node):
-        self.body.append(']')
+        if self.inLiteralBlock is False:
+            self.body.append(']')
 
     def visit_docinfo(self, node):
         nline = 'Document information: '
@@ -466,17 +470,26 @@ class AsciiDocTranslator(nodes.NodeVisitor):
         self.body.append('*`')
 
     def visit_literal_block(self, node):
+        self.inLiteralBlock = True
         level = len(self.lists)
+        attributes = []
+        block_char = '----'
+        if 'language' in node.attributes:
+            attributes += ['source', node.attributes['language']]
+        if 'linenos' in node.attributes and node.attributes['linenos'] is True:
+            attributes.append('linenums')
         if self.inAdmonition == True:
-            nline = '\n----\n'
+            nline = block_char
         elif level > 0:
-            nline = '+\n----\n'
+            nline = '+' + block_char
         else:
-            nline = '\n----\n'
-        self.body.append(nline)
+            nline = block_char
+        attributes.append('sub="attributes"')
+        self.body.append('\n[' + ','.join(attributes) + ']\n' + nline + '\n')
 
     def depart_literal_block(self, node):
         self.body.append('\n----\n')
+        self.inLiteralBlock = False
 
     def visit_emphasis(self, node):
         nline = ' _'
