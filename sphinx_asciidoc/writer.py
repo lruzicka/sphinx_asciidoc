@@ -681,6 +681,10 @@ class AsciiDocTranslator(nodes.NodeVisitor):
 
     def visit_figure(self, node):
         ids = node['ids']
+        if isinstance(ids, str) != True:
+            ids = " ".join(ids)
+        else:
+            pass
         count = str(self.figures)
         if len(ids) == 0:
             self.figures += 1
@@ -692,6 +696,7 @@ class AsciiDocTranslator(nodes.NodeVisitor):
             else:
                 ids = ids + '-duplicate'
         nline = '\n[[%s]]\n' % ids
+
         mline = '.'+ids+'\n'
         self.body.append(nline+mline)
 
